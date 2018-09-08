@@ -10,6 +10,8 @@ tmtags
 Thumbs.db
 Desktop.ini
 .env
+test/
+test.sh
 /vendor/
 composer
 composer.phar
