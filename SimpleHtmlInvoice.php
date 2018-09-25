@@ -17,6 +17,12 @@ class SimpleHtmlInvoice {
 
     }
 
+    public function displayInvoice() {
+        $this->html .=    '</table>';
+        $this->html .= '</div>';
+        return $this->html;
+    }
+
     private function cleanHeader($header = array(), $formatBlankFor = array()) {
         $cleanedHeader = array();
         if (count($header) > 0) {
@@ -47,7 +53,7 @@ class SimpleHtmlInvoice {
     }
 
     private function formatDate($timestamp = 0) {
-        if ($timestamp > 31557600) { // one year
+        if ($timestamp > 31557600) { // one year in seconds
             return date('', $timestamp);
         } else {
             return '';
@@ -62,15 +68,41 @@ class SimpleHtmlInvoice {
         return $this->lines;
     }
 
-    private function linesDisplay() {
-
+    private function displayPrice($price = 0, $priceInPennies = true) {
+        $price = (float)$price;
+        if ($priceInPennies && ($price != 0)) {
+            $price = $price/100;
+        }
+        return (($price < 0) ? "-" : "") . "$" . number_format(abs($price), 2, ".", ",");
     }
 
+    private function linesDisplay($priceInPennies = true) {
+        $html = '';
+        $total = 0;
+        $lines = $this->getLines();
 
-    public function displayInvoice() {
-        $this->html .=    '</table>';
-        $this->html .= '</div>';
-        return $this->html;
+        if (count($lines) > 0) {
+            foreach($lines as $lineNum => $line) {
+                $html .= '<tr class="item ' . (($line === end($lines)) ? 'last' : '') . '">';
+                $html .=    '<td>';
+                $html .=        $line['description'];
+                $html .=    '</td>';
+                $html .=    '<td>';
+                $html .=        $this->displayPrice($line['price']);
+                $html .=    '</td>';
+                $html .= '</tr>';
+
+                $total += (float)$line['price'];
+            }
+            $html .= '<tr class="total">';
+            $html .=    '<td></td>';
+            $html .=    '<td>';
+            $html .=        'Total: ' . $this->displayPrice($total);
+            $html .=    '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 
     private function topSection($header = array()) {
