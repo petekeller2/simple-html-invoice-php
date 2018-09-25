@@ -17,6 +17,10 @@ class SimpleHtmlInvoice {
 
     }
 
+    public function addLines($priceInPennies = true) {
+        $this->html .= $this->linesDisplay($priceInPennies);
+    }
+
     public function displayInvoice() {
         $this->html .=    '</table>';
         $this->html .= '</div>';
@@ -60,11 +64,11 @@ class SimpleHtmlInvoice {
         }
     }
 
-    private function setLines($lines = array()) {
+    public function setLines($lines = array()) {
         $this->lines = $lines;
     }
 
-    private function getLines() {
+    public function getLines() {
         return $this->lines;
     }
 
@@ -88,7 +92,7 @@ class SimpleHtmlInvoice {
                 $html .=        $line['description'];
                 $html .=    '</td>';
                 $html .=    '<td>';
-                $html .=        $this->displayPrice($line['price']);
+                $html .=        $this->displayPrice($line['price'], $priceInPennies);
                 $html .=    '</td>';
                 $html .= '</tr>';
 
@@ -97,7 +101,7 @@ class SimpleHtmlInvoice {
             $html .= '<tr class="total">';
             $html .=    '<td></td>';
             $html .=    '<td>';
-            $html .=        'Total: ' . $this->displayPrice($total);
+            $html .=        'Total: ' . $this->displayPrice($total, $priceInPennies);
             $html .=    '</td>';
             $html .= '</tr>';
         }
